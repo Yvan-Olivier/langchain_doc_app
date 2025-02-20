@@ -24,12 +24,23 @@ def ingest_data():
     split_docs = splitter.split_documents(raw_docs)
     print(f"Split into {len(split_docs)} documents")
 
-    # Update url for each document to point to the actual ReadTheDocs page
+    # Update url for each document to point to the current documentation
     for doc in split_docs:
         source = doc.metadata["source"]
-        # Transform local path to ReadTheDocs URL
-        # Example: langchain_doc/en/latest/... -> https://python.langchain.com/en/latest/...
-        new_url = "https://python.langchain.com/" + source.split("langchain_doc/")[1]
+        # Transform local path to current documentation URL
+        # Example input: langchain_doc/en/latest/modules/chains/index.html
+        # Example output: https://python.langchain.com/docs/modules/chains
+        
+        raw_path = source.split("langchain_doc/")[1]
+        clean_path = (
+            raw_path
+            .replace("en/latest/", "")  # Remove version path
+            .replace(".html", "")       # Remove .html extension
+            .replace("index", "")       # Remove index
+            .rstrip("/")               # Remove trailing slash
+        )
+        
+        new_url = f"https://python.langchain.com/docs/{clean_path}"
         doc.metadata.update({"source": new_url})
 
     # Create a Pinecone vector store from the document chunks
