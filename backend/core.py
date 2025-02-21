@@ -50,10 +50,6 @@ def run_llm(query: str):
     }
 
 if __name__ == '__main__':
-    query = "What is a langchain chain?"
+    query = "What is LangChain?"
     response = run_llm(query)
     print(response)
-
-
-
-
